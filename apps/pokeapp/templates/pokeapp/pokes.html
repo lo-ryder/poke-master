@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Poke | Home</title>
+    <link rel="stylesheet"
+    href="https://cdnjs.cloudflare.com/ajax/libs/skeleton-framework/1.1.1/skeleton.min.css">
+  </head>
+
+  <body>
+    <a href="{% url 'logregapp:index'%}">Logout</a>
+
+    <h2>Welcome, {{activeUser.name}}!</h2>
+    <p>{{ whoPokedMe.count }} people poked you!</p>
+
+    <div style="height:200px;width:700px;border:3px solid #ccc;font:8px/10px;overflow:auto;">
+      {% for poke in distinctPokeList %}
+        {% for person in userList %}
+          {% if poke.user_poking_id == person.id %}
+        <h3>{{ person.name }} poked you {{poke.user_poking__count}} times!!</h3>
+          {% endif %}
+        {% endfor %}
+      {% endfor %}
+    </div>
+
+    <h1> </h1>
+    <h3>People you may want to poke:</h3>
+    <table>
+      <tr>
+        <th>  Name   </th>
+        <th>  Alias  </th>
+        <th>  Email Address  </th>
+        <th>  Poke History   </th>
+        <th>  Action   </th>
+      </tr>
+
+      {% for person in userList %}
+      <tr>
+        <form class="addpoke" action="{%url 'pokeapp:pokebutton' %}" method="post">
+        {% csrf_token %}
+          <td><input type="hidden" name="personpoked_id" value="{{person.id}}">{{person.name}}</td>
+          <td>{{person.alias}}</td>
+          <td>{{person.email}}</td>
+          <td>{{person.poked.count}}</td>
+          <td><input type="hidden" name="user_id" value="{{request.session.id}}"><input class="button-primary" type="submit" name="submit" value="POKE!"></td>
+        </form>
+      </tr>
+      {% empty %}
+      <p> No other users, please add other users to poke!</p>
+      {% endfor %}
+
+    </table>
+  </body>
+</html>
